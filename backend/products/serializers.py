@@ -6,35 +6,55 @@ from rest_framework.reverse import reverse
 
 from .validators import validate_title, validate_title_no_hello, unique_product_title
 
+from api.serializers import UserPublicSerializer
+
+
+
+class ProductInlineSerializer(serializers.Serializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='product-detail',
+        lookup_field='pk',
+        read_only=True
+    )
+    title = serializers.CharField(read_only=True)
 class ProductSerializer(serializers.ModelSerializer):
+    owner = UserPublicSerializer(source='user', read_only = True)
+    related_products = ProductInlineSerializer(source='user.product_set.all', read_only=True,)
+    # email = serializers.EmailField(source='user.email', read_only=True)
     discount = serializers.SerializerMethodField(read_only=True)
+    my_user_data = serializers.SerializerMethodField(read_only=True)
     # url = serializers.SerializerMethodField(read_only=True)
     edit_url = serializers.SerializerMethodField(read_only=True)
     url = serializers.HyperlinkedIdentityField(
         view_name="product-detail",
         lookup_field='pk'
     )
-    email = serializers.EmailField(write_only=True)
+    # email = serializers.EmailField(write_only=True)
     # custom validation over here
     title = serializers.CharField(validators=[validate_title_no_hello, unique_product_title])
     # name = serializers.CharField(source='title', read_only=True)
     class Meta:
         model = Product
         fields = [
-            #'user',
+            'owner',
+            #'email',
             'edit_url',
             'url',
-            'email',
             'pk',
             'title',
             #'name',
             'content',
             'price',
             'sale_price',
-            'discount'
+            'discount',
+            'my_user_data',
+            'related_products'
         ]
 
-    
+    def get_my_user_data(self,obj):
+        return{
+            "username": obj.user.username
+        }
     
     """def get_url(self,obj):
         # return f"/api/products/{obj.pk}/"
