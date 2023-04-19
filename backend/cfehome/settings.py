@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 
+# For env variables
+import environ
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,11 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # INTERNAL APPS
     'api',
     'products',
     'search',
+    # THIRD PARTY PACKAGES
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    # THIRD PARTY API SERVICES
+    'algoliasearch_django'
 ]
 
 MIDDLEWARE = [
@@ -139,4 +148,14 @@ REST_FRAMEWORK={
     "DEFAULT_PAGINATION_CLASS" : "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE":5
 
+}
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+
+ALGOLIA = {
+    'APPLICATION_ID': env('ALGOLIA_APP_ID'),
+    'API_KEY': env('ALGOLIA_API_KEY'),
+    'INDEX_PREFIX': 'ghaith'
 }

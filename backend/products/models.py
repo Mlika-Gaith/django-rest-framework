@@ -4,8 +4,13 @@ from django.conf import settings
 
 from django.db.models import Q
 
+from datetime import datetime
+
+import random
+
 User = settings.AUTH_USER_MODEL # auth.user
 
+TAGS_MODEL_VALUES = ['electronics', 'cars', 'boats', 'movies', 'cameras']
 
 class ProductQuerySet(models.QuerySet):
     def is_public(self):
@@ -15,6 +20,7 @@ class ProductQuerySet(models.QuerySet):
         qs = self.is_public().filter(lookup)
         if user is not None:
             qs2 = self.filter(user=user).filter(lookup)
+            # show distinct results
             qs = (qs | qs2).distinct()
         return qs
 
@@ -37,13 +43,21 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=2, default=99.99)
     # search only public records 
     public = models.BooleanField(default=True)
+    # publishing time
+    publish_timestamp = models.DateTimeField(default=datetime.now())
 
     objects = ProductManager()
 
+
+    def is_public(self) -> bool: # returns bool
+        return self.public # True or False
+
+    def get_tags_list(self):
+        return [random.choice(TAGS_MODEL_VALUES)]
 
     @property
     def sale_price(self):
         return "%.2f" %(float(self.price) * 0.8)
     
     def get_discount(self):
-        return 222
+        return "%.2f" %(float(self.price) - float(self.price) * 0.8)
