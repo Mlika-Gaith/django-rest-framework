@@ -3,7 +3,7 @@ endpoint = "http://localhost:8080/api/products/"
 
 
 data = {
-    "title" : "Daddy CHILL !!!",
+    "title" : "Test",
     "price" : 1500.20
 }
 

@@ -157,5 +157,5 @@ environ.Env.read_env()
 ALGOLIA = {
     'APPLICATION_ID': env('ALGOLIA_APP_ID'),
     'API_KEY': env('ALGOLIA_API_KEY'),
-    'INDEX_PREFIX': 'ghaith'
+    'INDEX_PREFIX': 'cfe'
 }
